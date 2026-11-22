@@ -1,0 +1,7 @@
+# Never commit age identities, plaintext source staging, or decrypted output
+*age-identity*
+*age-identity*.txt
+protected-plaintext/
+protected-decrypted/
+decrypted-source/
+rss-source-identity.txt

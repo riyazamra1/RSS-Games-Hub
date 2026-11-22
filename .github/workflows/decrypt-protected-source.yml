@@ -1,0 +1,67 @@
+name: Decrypt protected source (manual)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: protected-source-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  decrypt:
+    if: github.ref == 'refs/heads/feat/rss-coin-game-integration'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout selected feature branch
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install age
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes age
+
+      - name: Decrypt protected source into ephemeral runner storage
+        env:
+          AGE_SECRET_KEY: ${{ secrets.RSS_SOURCE_AGE_IDENTITY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob globstar
+          encrypted_files=(protected/**/*.age)
+          if (( ${#encrypted_files[@]} == 0 )); then
+            echo "::notice::No encrypted source package exists yet. Add protected/**/*.age after the source has been encrypted."
+            exit 0
+          fi
+          if [[ -z "${AGE_SECRET_KEY:-}" ]]; then
+            echo "::error::Repository secret RSS_SOURCE_AGE_IDENTITY is not configured."
+            exit 1
+          fi
+
+          umask 077
+          identity_file="$RUNNER_TEMP/rss-source-age-identity"
+          output_dir="$RUNNER_TEMP/rss-protected-source"
+          mkdir -p "$output_dir"
+          printf '%s\n' "$AGE_SECRET_KEY" > "$identity_file"
+          unset AGE_SECRET_KEY
+          cleanup() {
+            rm -f "$identity_file"
+            rm -rf "$output_dir"
+          }
+          trap cleanup EXIT
+
+          for encrypted_file in "${encrypted_files[@]}"; do
+            relative_path="${encrypted_file#protected/}"
+            relative_path="${relative_path%.age}"
+            output_file="$output_dir/$relative_path"
+            mkdir -p "$(dirname "$output_file")"
+            age --decrypt --identity "$identity_file" --output "$output_file" "$encrypted_file"
+          done
+
+          echo "Successfully decrypted ${#encrypted_files[@]} encrypted file(s) into ephemeral runner storage."
+          echo "No decrypted source is uploaded, cached, committed, or printed to logs."
