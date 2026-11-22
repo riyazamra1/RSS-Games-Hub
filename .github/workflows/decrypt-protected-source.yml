@@ -1,6 +1,12 @@
-name: Decrypt protected source (manual)
+name: Decrypt protected source
 
 on:
+  push:
+    branches:
+      - feat/rss-coin-game-integration
+    paths:
+      - 'protected/**/*.age'
+      - '.github/workflows/decrypt-protected-source.yml'
   workflow_dispatch:
 
 permissions:
@@ -14,6 +20,7 @@ jobs:
   decrypt:
     if: github.ref == 'refs/heads/feat/rss-coin-game-integration'
     runs-on: ubuntu-latest
+    environment: rss-source-decryption
     timeout-minutes: 10
     steps:
       - name: Checkout selected feature branch
@@ -39,7 +46,7 @@ jobs:
             exit 0
           fi
           if [[ -z "${AGE_SECRET_KEY:-}" ]]; then
-            echo "::error::Repository secret RSS_SOURCE_AGE_IDENTITY is not configured."
+            echo "::error::Environment secret RSS_SOURCE_AGE_IDENTITY is not configured."
             exit 1
           fi
 
