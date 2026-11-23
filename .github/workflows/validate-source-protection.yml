@@ -1,0 +1,39 @@
+name: Validate source protection
+
+on:
+  push:
+    branches:
+      - feat/rss-coin-game-integration
+  pull_request:
+    branches:
+      - feat/rss-coin-game-integration
+
+permissions:
+  contents: read
+
+concurrency:
+  group: source-protection-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  encryption-round-trip:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+
+      - name: Install age
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes age
+
+      - name: Validate shell syntax
+        run: |
+          bash -n scripts/encrypt-source.sh
+          bash -n scripts/test-source-encryption.sh
+
+      - name: Test encryption and decryption round trip
+        run: bash scripts/test-source-encryption.sh
