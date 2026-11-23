@@ -7,7 +7,8 @@ RSS Games Hub is the shared entry point for Razeen Secure Solution games across 
 RSS COIN (RSC) is the single internal currency shared by all RSS Games. RSS Core is the authoritative wallet and double-entry ledger service. Game clients must never calculate, credit, debit, reserve, refund, or settle RSC themselves.
 
 - [RSS COIN Game Integration](docs/RSS-COIN-GAME-INTEGRATION.md)
-- [Security and Release Gates](docs/SECURITY-AND-RELEASE-GATES.md)\n- [Source Encryption and CI Validation](docs/SOURCE-ENCRYPTION.md)
+- [Security and Release Gates](docs/SECURITY-AND-RELEASE-GATES.md)
+- [Source Encryption and CI Validation](docs/SOURCE-ENCRYPTION.md)
 
 ## Source protection
 
