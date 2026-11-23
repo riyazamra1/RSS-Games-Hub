@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 077
 
 usage() {
   echo "Usage: $0 <source-directory> <protected-output-directory> <age-recipient>" >&2
@@ -27,11 +28,15 @@ mkdir -p "$output_dir"
 output_dir="$(cd "$output_dir" && pwd -P)"
 
 case "$output_dir/" in
-  "$source_dir/"*)
+  "$source_dir/"|"$source_dir/"*)
     echo "Output directory must not be inside the plaintext source directory." >&2
     exit 1
     ;;
 esac
+if find "$output_dir" -mindepth 1 -print -quit | grep -q .; then
+  echo "Output directory must be empty to avoid mixing stale ciphertext." >&2
+  exit 1
+fi
 if find "$source_dir" -type l -print -quit | grep -q .; then
   echo "Symlinks are not accepted; resolve them before encryption." >&2
   exit 1
