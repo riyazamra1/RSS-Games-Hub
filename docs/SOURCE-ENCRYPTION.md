@@ -50,7 +50,13 @@ The workflow intentionally does not build or deploy the application. This reposi
 
 If the identity is compromised, generate a new age identity, re-encrypt all source to the new public recipient, update the environment secret, verify decryption, and then remove obsolete ciphertext. Restrict repository write access and environment-secret administration to trusted maintainers. A public key is not a secret; the private identity is.
 
-## 5. Automated validation\n\nThe `Validate source protection` workflow runs without secrets on pushes and pull requests targeting this feature branch. It checks shell syntax and performs a generated-key encryption/decryption round trip using disposable test files. It does not decrypt proprietary source or access the protected environment.\n\nThe decryption workflow pins the checkout action to a reviewed commit SHA and uses read-only repository permissions.\n\n## 6. Current status
+## 5. Automated validation
+
+The `Validate source protection` workflow runs without secrets on pushes and pull requests targeting this feature branch. It checks shell syntax and performs a generated-key encryption/decryption round trip using disposable test files. It does not decrypt proprietary source or access the protected environment.
+
+The decryption workflow pins the checkout action to a reviewed commit SHA and uses read-only repository permissions.
+
+## 6. Current status
 
 - Encryption helper, round-trip test, non-secret validation workflow, and protected decryption workflow are implemented as scaffolding.
 - No source files have been encrypted or added yet.
