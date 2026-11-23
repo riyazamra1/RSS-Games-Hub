@@ -60,7 +60,7 @@ Before enabling a game for competitive RSC:
 
 ## Current blockers
 
-- This public repository has no established encrypted application-source/build pipeline yet.
+- The age encryption/decryption scaffolding and non-secret round-trip CI check are present, but no proprietary source files have been encrypted and no application build pipeline is defined yet.
 - The existing Liquid Flow game Worker has no RSS Core service-token binding.
 - The latest RSS Core settlement implementation still requires a fresh typecheck and test run.
 - Game-specific payout allocation and interruption rules have not been finalized.
